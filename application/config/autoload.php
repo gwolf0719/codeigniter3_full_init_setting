@@ -132,4 +132,4 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-$autoload['model'] = array('mod_general', 'mod_config');
+$autoload['model'] = array('mod_mongo', 'mod_config');
