@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Mod_general extends CI_Model {
+class Mod_mongo extends CI_Model {
     public function __construct() {
         parent::__construct();
     }
