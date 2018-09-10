@@ -52,7 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'index';
 
 /************* CONSOLE *************/
-$route['admin/(:any)'] = 'admin/$1';
+$route['admin'] = 'admin';
 
 /************* OTHER *************/
 $route['api/(:any)/(:any)'] = 'api/authenticate/$1/$2';
