@@ -33,12 +33,13 @@ class Api extends CI_Controller {
             // 辨識是用get or post
             if (isset($routes[$path_name]['get'][$func_name])) {
                 $json_arr['method'] = 'get';
+                $json_arr['func'] = $routes[$path_name]['get'][$func_name];
             } else if (isset($routes[$path_name]['post'][$func_name])) {
-                $json_arr['post'] = 'post';
+                $json_arr['method'] = 'post';
+                $json_arr['func'] = $routes[$path_name]['post'][$func_name];
             }
             $json_arr = $this->mod_config->msgResponse((isset($json_arr))?$json_arr:array(), 'success', 'GET_DATA_SUCCESS', $this->language);
             $json_arr['path'] = $path_name;
-            $json_arr['func'] = $routes[$path_name][$func_name];
             return $json_arr;
         } else {
             $res = $this->check_api_table($path_name, $func_name);
