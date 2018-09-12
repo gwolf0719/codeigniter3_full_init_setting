@@ -76,18 +76,58 @@ class Api extends CI_Controller {
 
     // 進行日常預設工作
     function to_work($path_name, $func_name, $data) {
-        if ($func_name == 'exist') {
-            return $this->to_work_exist($path_name, $func_name, $data);
-        } else if ($func_name == 'insert') {
-            return $this->to_work_insert($path_name, $func_name, $data);
-        } else if ($func_name == 'update') {
+        switch ($func_name) {
+            case 'exist':
+                # code...
+                return $this->to_work_exist($path_name, $func_name, $data);
+                break;
+            case 'insert':
+                # code...
+                return $this->to_work_insert($path_name, $func_name, $data);
+                break;
+            case 'update':
+                # code...
+                return $this->to_work_update($path_name, $func_name, $data);
+                break;
+            case 'delete':
+                # code...
+                return $this->to_work_delete($path_name, $func_name, $data);
+                break;
+            case 'setting':
+                # code...
+                return $this->to_work_setting($path_name, $func_name, $data);
+                break;
+            case 'get_list':
+                # code...
+                return $this->to_work_get_list($path_name, $func_name, $data);
+                break;
+            case 'get_once':
+                # code...
+                return $this->to_work_get_once($path_name, $func_name, $data);
+                break;
+            
+        }
+    }
+
+    // 檢查資料是否存在 如果資料存在就修改 如果不存在就新增
+    function to_work_setting($path_name, $func_name, $data){
+        $methods = $this->config->item('routes_table');
+        $table = $methods[$path_name]['table'];
+        $info = $methods[$path_name]['detals'][$func_name];
+        // 負責驗證的元素
+        $verify = array();
+        foreach ($info['verify'] as $key => $value) {
+            if (isset($data[$key])) $verify[$key] = $data[$key];
+        }
+
+        // 加入邏輯佇列
+        $dataQuery['verify'] = $verify;
+        $dataQuery['table'] = $table;
+        $response = $this->mod_mongo->chk_once($dataQuery);
+        if($response == true){
             return $this->to_work_update($path_name, $func_name, $data);
-        } else if ($func_name == 'delete') {
-            return $this->to_work_delete($path_name, $func_name, $data);
-        } else if ($func_name == 'get_list') {
-            return $this->to_work_get_list($path_name, $func_name, $data);
-        } else if ($func_name == 'get_once') {
-            return $this->to_work_get_once($path_name, $func_name, $data);
+        }else{
+            return $this->to_work_insert($path_name, $func_name, $data);
         }
     }
 
@@ -118,7 +158,7 @@ class Api extends CI_Controller {
         // 加入邏輯佇列
         $dataQuery['verify'] = $verify;
         $dataQuery['table'] = $table;
-        $response = $this->mod_universal->chk_once($dataQuery);
+        $response = $this->mod_mongo->chk_once($dataQuery);
         $json_arr['exist'] = $response;
         $json_arr = $this->mod_config->msgResponse((isset($json_arr))?$json_arr:array(), 'success', 'GET_DATA_SUCCESS', $this->language);
         return $json_arr;
@@ -154,7 +194,7 @@ class Api extends CI_Controller {
         // 加入邏輯佇列
         $dataQuery['data'] = $query;
         $dataQuery['table'] = $table;
-        $response = $this->mod_universal->insert($dataQuery);
+        $response = $this->mod_mongo->insert($dataQuery);
         $json_arr['response'] = $response;
         $json_arr = $this->mod_config->msgResponse((isset($json_arr))?$json_arr:array(), 'success', 'GET_DATA_SUCCESS', $this->language);
         return $json_arr;
@@ -197,7 +237,7 @@ class Api extends CI_Controller {
         $dataQuery['verify'] = $verify;
         $dataQuery['data'] = $query;
         $dataQuery['table'] = $table;
-        $response = $this->mod_universal->update($dataQuery);
+        $response = $this->mod_mongo->update($dataQuery);
         $json_arr['response'] = $response;
         $json_arr = $this->mod_config->msgResponse((isset($json_arr))?$json_arr:array(), 'success', 'GET_DATA_SUCCESS', $this->language);
         return $json_arr;
@@ -230,7 +270,7 @@ class Api extends CI_Controller {
         // 加入邏輯佇列
         $dataQuery['verify'] = $verify;
         $dataQuery['table'] = $table;
-        $response = $this->mod_universal->delete($dataQuery);
+        $response = $this->mod_mongo->delete($dataQuery);
         $json_arr['response'] = $response;
         $json_arr = $this->mod_config->msgResponse((isset($json_arr))?$json_arr:array(), 'success', 'GET_DATA_SUCCESS', $this->language);
         return $json_arr;
@@ -287,7 +327,7 @@ class Api extends CI_Controller {
         $dataQuery['likes'] = $likes;
         $dataQuery['record'] = $record;
         $dataQuery['table'] = $table;
-        $response = $this->mod_universal->get_list($dataQuery);
+        $response = $this->mod_mongo->get_list($dataQuery);
         $json_arr['response'] = $response;
         $json_arr = $this->mod_config->msgResponse((isset($json_arr))?$json_arr:array(), 'success', 'GET_DATA_SUCCESS', $this->language);
         return $json_arr;
@@ -327,7 +367,7 @@ class Api extends CI_Controller {
         $dataQuery['verify'] = $verify;
         $dataQuery['likes'] = $likes;
         $dataQuery['table'] = $table;
-        $response = $this->mod_universal->get_once($dataQuery);
+        $response = $this->mod_mongo->get_once($dataQuery);
         $json_arr['response'] = $response;
         $json_arr = $this->mod_config->msgResponse((isset($json_arr))?$json_arr:array(), 'success', 'GET_DATA_SUCCESS', $this->language);
         return $json_arr;
